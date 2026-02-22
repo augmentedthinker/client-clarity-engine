@@ -51,10 +51,10 @@ button:active{transform:translateY(0)}
 
 <section class="grid">
 <div class="card"><h3>1) Problem Brief</h3>
-<label>Primary user</label><input id="user" placeholder="e.g., litigation associate"/>
-<label>Current pain</label><textarea id="pain"></textarea>
-<label>Desired outcome</label><textarea id="outcome"></textarea>
-<label>Success metric</label><input id="metric"/>
+<label>Primary user</label><input id="user" placeholder="e.g., DC data-breach litigation associate"/>
+<label>Current pain</label><textarea id="pain" placeholder="Where do Bluebook/citation errors hurt most in breach matters?"></textarea>
+<label>Desired outcome</label><textarea id="outcome" placeholder="What would a perfect citation workflow feel like under deadline?"></textarea>
+<label>Success metric</label><input id="metric" placeholder="e.g., 50% faster cite-check, 95% first-pass accuracy"/>
 </div>
 <div class="card"><h3>2) Workflow + Constraints</h3>
 <label>Current steps</label><textarea id="workflow"></textarea>
@@ -63,9 +63,9 @@ button:active{transform:translateY(0)}
 <label>Integrations</label><input id="integrations"/>
 </div>
 <div class="card"><h3>3) Source Matrix</h3>
-<label>Top source types (ranked)</label><textarea id="sourceTypes"></textarea>
-<label>Most error-prone source types</label><textarea id="sourceErrors"></textarea>
-<label>Required fields per source type</label><textarea id="sourceFields"></textarea>
+<label>Top source types (ranked)</label><textarea id="sourceTypes" placeholder="e.g., federal cases, DC Code, FTC orders, AG guidance, consent decrees"></textarea>
+<label>Most error-prone source types</label><textarea id="sourceErrors" placeholder="Which source types regularly create formatting errors?"></textarea>
+<label>Required fields per source type</label><textarea id="sourceFields" placeholder="What fields must be captured every time to build a correct citation?"></textarea>
 </div>
 <div class="card"><h3>4) Rule Variance + Style Overrides</h3>
 <label>Rule baseline / edition</label><input id="ruleEdition" placeholder="e.g., Bluebook 21st ed"/>
@@ -89,10 +89,17 @@ button:active{transform:translateY(0)}
 <label>Biggest adoption blocker</label><input id="blocker"/>
 </div>
 <div class="card"><h3>8) Change Management</h3>
-<label>Who approves adoption?</label><input id="approver"/>
+<label>Who approves adoption?</label><input id="approver" placeholder="e.g., practice group lead / partner"/>
 <label>Who might resist and why?</label><textarea id="resistance"></textarea>
 <label>What builds trust in week 1?</label><textarea id="trust"></textarea>
 <label>Demo scenario</label><textarea id="demo"></textarea>
+</div>
+
+<div class="card"><h3>9) Data Breach Case Context (DC-focused)</h3>
+<label>Typical breach matter types</label><textarea id="breachTypes" placeholder="e.g., ransomware class actions, regulator investigations, incident response advisories"></textarea>
+<label>Authorities cited most often</label><textarea id="authorities" placeholder="e.g., FTC, CFPB, DC AG, federal district/DC Circuit"></textarea>
+<label>Time-critical filing pressure points</label><textarea id="pressurePoints" placeholder="Where does citation quality break down during urgent timelines?"></textarea>
+<label>Confidentiality / privilege boundaries</label><textarea id="privilege" placeholder="What data must never be entered, stored, or exposed?"></textarea>
 </div>
 </section>
 
@@ -101,13 +108,13 @@ button:active{transform:translateY(0)}
 
 </div>
 <script>
-const fields=["user","pain","outcome","metric","workflow","failures","constraints","integrations","sourceTypes","sourceErrors","sourceFields","ruleEdition","overrides","jurisdiction","risk","accuracy","reviewPolicy","placement","outputFormat","turnaround","must","outscope","frequency","blocker","approver","resistance","trust","demo"];
+const fields=["user","pain","outcome","metric","workflow","failures","constraints","integrations","sourceTypes","sourceErrors","sourceFields","ruleEdition","overrides","jurisdiction","risk","accuracy","reviewPolicy","placement","outputFormat","turnaround","must","outscope","frequency","blocker","approver","resistance","trust","demo","breachTypes","authorities","pressurePoints","privilege"];
 const $=id=>document.getElementById(id), val=id=>($(id)?.value||'').trim()||"(not provided)";
 function rescore(){let f=0;fields.forEach(id=>{if(($(id)?.value||'').trim())f++;});const pct=Math.round((f/fields.length)*100);$('fill').style.width=pct+'%';$('score').textContent=`${pct} / 100 clarity`;}
 fields.forEach(id=>$(id).addEventListener('input',rescore));rescore();
 function stamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}-${p(d.getMinutes())}`}
-function pack(){return {domain:val('domain'),problem:{user:val('user'),pain:val('pain'),outcome:val('outcome'),metric:val('metric')},workflow:{steps:val('workflow'),failures:val('failures'),constraints:val('constraints'),integrations:val('integrations')},sourceMatrix:{types:val('sourceTypes'),errors:val('sourceErrors'),requiredFields:val('sourceFields')},ruleVariance:{edition:val('ruleEdition'),overrides:val('overrides'),jurisdiction:val('jurisdiction')},riskQA:{risk:val('risk'),accuracyTarget:val('accuracy'),reviewPolicy:val('reviewPolicy')},placement:{timing:val('placement'),outputFormat:val('outputFormat'),turnaround:val('turnaround')},scope:{must:val('must'),outOfScope:val('outscope'),frequency:val('frequency'),blocker:val('blocker')},changeMgmt:{approver:val('approver'),resistance:val('resistance'),trust:val('trust'),demo:val('demo')}}}
-function buildBrief(){const d=pack(); const text=`PROJECT INTAKE SUMMARY\nDomain: ${d.domain}\n\n1) PROBLEM BRIEF\n- User: ${d.problem.user}\n- Pain: ${d.problem.pain}\n- Outcome: ${d.problem.outcome}\n- Metric: ${d.problem.metric}\n\n2) WORKFLOW + CONSTRAINTS\n- Steps: ${d.workflow.steps}\n- Failures: ${d.workflow.failures}\n- Constraints: ${d.workflow.constraints}\n- Integrations: ${d.workflow.integrations}\n\n3) SOURCE MATRIX\n- Types: ${d.sourceMatrix.types}\n- Error-prone: ${d.sourceMatrix.errors}\n- Required fields: ${d.sourceMatrix.requiredFields}\n\n4) RULE VARIANCE / OVERRIDES\n- Edition: ${d.ruleVariance.edition}\n- Overrides: ${d.ruleVariance.overrides}\n- Jurisdiction: ${d.ruleVariance.jurisdiction}\n\n5) RISK + QA\n- Error cost: ${d.riskQA.risk}\n- Accuracy target: ${d.riskQA.accuracyTarget}%\n- Review policy: ${d.riskQA.reviewPolicy}\n\n6) WORKFLOW PLACEMENT\n- Timing: ${d.placement.timing}\n- Output format: ${d.placement.outputFormat}\n- Turnaround: ${d.placement.turnaround}\n\n7) V1 SCOPE\n- Must have: ${d.scope.must}\n- Out of scope: ${d.scope.outOfScope}\n- Frequency: ${d.scope.frequency}\n- Blocker: ${d.scope.blocker}\n\n8) CHANGE MANAGEMENT\n- Approver: ${d.changeMgmt.approver}\n- Resistance: ${d.changeMgmt.resistance}\n- Trust week 1: ${d.changeMgmt.trust}\n- Demo: ${d.changeMgmt.demo}\n\nWHAT THIS OUTPUT IS FOR\n- This brief is the blueprint used to build your app/AI tool around your real needs.`; $('brief').textContent=text; return text;}
+function pack(){return {domain:val('domain'),problem:{user:val('user'),pain:val('pain'),outcome:val('outcome'),metric:val('metric')},workflow:{steps:val('workflow'),failures:val('failures'),constraints:val('constraints'),integrations:val('integrations')},sourceMatrix:{types:val('sourceTypes'),errors:val('sourceErrors'),requiredFields:val('sourceFields')},ruleVariance:{edition:val('ruleEdition'),overrides:val('overrides'),jurisdiction:val('jurisdiction')},riskQA:{risk:val('risk'),accuracyTarget:val('accuracy'),reviewPolicy:val('reviewPolicy')},placement:{timing:val('placement'),outputFormat:val('outputFormat'),turnaround:val('turnaround')},scope:{must:val('must'),outOfScope:val('outscope'),frequency:val('frequency'),blocker:val('blocker')},changeMgmt:{approver:val('approver'),resistance:val('resistance'),trust:val('trust'),demo:val('demo')},dataBreachContext:{types:val('breachTypes'),authorities:val('authorities'),pressurePoints:val('pressurePoints'),privilegeBoundaries:val('privilege')}}}
+function buildBrief(){const d=pack(); const text=`PROJECT INTAKE SUMMARY\nDomain: ${d.domain}\n\n1) PROBLEM BRIEF\n- User: ${d.problem.user}\n- Pain: ${d.problem.pain}\n- Outcome: ${d.problem.outcome}\n- Metric: ${d.problem.metric}\n\n2) WORKFLOW + CONSTRAINTS\n- Steps: ${d.workflow.steps}\n- Failures: ${d.workflow.failures}\n- Constraints: ${d.workflow.constraints}\n- Integrations: ${d.workflow.integrations}\n\n3) SOURCE MATRIX\n- Types: ${d.sourceMatrix.types}\n- Error-prone: ${d.sourceMatrix.errors}\n- Required fields: ${d.sourceMatrix.requiredFields}\n\n4) RULE VARIANCE / OVERRIDES\n- Edition: ${d.ruleVariance.edition}\n- Overrides: ${d.ruleVariance.overrides}\n- Jurisdiction: ${d.ruleVariance.jurisdiction}\n\n5) RISK + QA\n- Error cost: ${d.riskQA.risk}\n- Accuracy target: ${d.riskQA.accuracyTarget}%\n- Review policy: ${d.riskQA.reviewPolicy}\n\n6) WORKFLOW PLACEMENT\n- Timing: ${d.placement.timing}\n- Output format: ${d.placement.outputFormat}\n- Turnaround: ${d.placement.turnaround}\n\n7) V1 SCOPE\n- Must have: ${d.scope.must}\n- Out of scope: ${d.scope.outOfScope}\n- Frequency: ${d.scope.frequency}\n- Blocker: ${d.scope.blocker}\n\n8) CHANGE MANAGEMENT\n- Approver: ${d.changeMgmt.approver}\n- Resistance: ${d.changeMgmt.resistance}\n- Trust week 1: ${d.changeMgmt.trust}\n- Demo: ${d.changeMgmt.demo}\n\n9) DATA BREACH CASE CONTEXT\n- Matter types: ${d.dataBreachContext.types}\n- Key authorities: ${d.dataBreachContext.authorities}\n- Pressure points: ${d.dataBreachContext.pressurePoints}\n- Privilege boundaries: ${d.dataBreachContext.privilegeBoundaries}\n\nWHAT THIS OUTPUT IS FOR\n- This brief is the blueprint used to build your app/AI tool around your real needs.`; $('brief').textContent=text; return text;}
 $('generate').addEventListener('click',buildBrief);
 $('copy').addEventListener('click',async()=>{const text=buildBrief(); try{await navigator.clipboard.writeText(text);}catch{}});
 function dl(name,text,mime){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
