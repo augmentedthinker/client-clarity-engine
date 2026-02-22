@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Client Clarity Engine v2</title>
+<style>
+:root{--bg:#0b1020;--line:#2f447f;--t:#eaf0ff;--m:#aebbe2;--a:#7fe7ff;--b:#c39dff;--gold:#e7c27d}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:var(--t);background:radial-gradient(1100px 700px at 10% -10%,#25397a 0%,transparent 45%),radial-gradient(900px 550px at 100% 0%,#3f245f 0%,transparent 40%),var(--bg)}
+.wrap{max-width:1200px;margin:0 auto;padding:18px}
+.hero,.card{background:linear-gradient(180deg,#1a2347de,#121a34de);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px #0005;position:relative;overflow:hidden}
+.hero::before,.card::before{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.05) 30%,transparent 60%);transform:translateX(-120%);animation:sheen 9s infinite}
+.hero,.card{padding:12px}
+.hero{animation:fadeUp .6s ease both}
+.sub{color:var(--m)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.card{animation:fadeUp .55s ease both;transition:transform .22s ease, box-shadow .22s ease,border-color .22s ease}
+.card:hover{transform:translateY(-2px);border-color:#5478db;box-shadow:0 18px 35px rgba(9,16,39,.55)}
+.grid .card:nth-child(1){animation-delay:.04s}.grid .card:nth-child(2){animation-delay:.08s}.grid .card:nth-child(3){animation-delay:.12s}.grid .card:nth-child(4){animation-delay:.16s}.grid .card:nth-child(5){animation-delay:.2s}.grid .card:nth-child(6){animation-delay:.24s}.grid .card:nth-child(7){animation-delay:.28s}.grid .card:nth-child(8){animation-delay:.32s}
+label{display:block;font-size:.84rem;color:#c8d5ff;margin:6px 0 4px}
+input,select,textarea{width:100%;background:#0d1633;color:var(--t);border:1px solid #36508f;border-radius:9px;padding:8px;transition:border-color .2s ease, box-shadow .2s ease, background .2s ease}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#6ea5ff;box-shadow:0 0 0 3px rgba(110,165,255,.2);background:#101c3f}
+textarea{min-height:72px;resize:vertical}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+button{background:linear-gradient(180deg,#274086,#1d2c5a);color:#fff;border:1px solid #5f84f3;border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;transition:transform .15s ease,filter .2s ease, box-shadow .2s ease}
+button:hover{filter:brightness(1.08);transform:translateY(-1px);box-shadow:0 8px 18px rgba(62,110,230,.35)}
+button:active{transform:translateY(0)}
+.out{white-space:pre-wrap;background:#0c1530;border:1px solid #2b416f;border-radius:12px;padding:10px;min-height:170px}
+.meter{height:10px;background:#0d1330;border:1px solid #2b3d70;border-radius:999px;overflow:hidden}
+.fill{height:100%;width:0%;background:linear-gradient(90deg,var(--a),var(--b));transition:width .35s ease}
+.tip{font-size:.92rem;line-height:1.45}.tip strong{color:#d7e6ff}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border:1px solid #765325;background:rgba(231,194,125,.13);border-radius:999px;color:var(--gold);font-size:.76rem;font-weight:700;margin-bottom:8px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sheen{0%,80%,100%{transform:translateX(-120%)}40%{transform:translateX(140%)}}
+
+/* Easter eggs */
+#rose-layer,#cat-layer{position:fixed;inset:0;pointer-events:none;z-index:30}
+.rose{position:absolute;font-size:18px;opacity:.85;animation:fallRose linear forwards;filter:drop-shadow(0 4px 6px rgba(0,0,0,.35))}
+@keyframes fallRose{0%{transform:translateY(-30px) rotate(0deg)}100%{transform:translateY(105vh) rotate(360deg);opacity:0}}
+.cat-pop{position:absolute;bottom:12px;left:-120px;font-size:46px;animation:catWalk 8s ease-in-out forwards;filter:drop-shadow(0 8px 10px rgba(0,0,0,.4))}
+@keyframes catWalk{0%{left:-120px;transform:translateY(0)}20%{transform:translateY(-8px)}50%{transform:translateY(0)}100%{left:calc(100vw + 40px);transform:translateY(-6px)}}
+.rose-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid #7a3a56;background:rgba(255,115,156,.12);border-radius:999px;color:#ffb5cf;font-size:.75rem;font-weight:700;margin-left:6px}
+
+@media(max-width:950px){.grid{grid-template-columns:1fr}}
+</style></head><body><div id="rose-layer"></div><div id="cat-layer"></div><div class="wrap">
+<section class="hero"><div class="badge">PROFESSIONAL INTAKE MODE</div><h2 style="margin:0">🧭 Client Clarity Engine v2 <span class="rose-badge">🌹 Rose Edition</span></h2><div class="sub">Turn fuzzy ideas into a clear build brief your developer can actually use.</div>
+<div class="row" style="margin-top:8px"><div style="flex:1;min-width:220px"><div class="meter"><div id="fill" class="fill"></div></div><div id="score" class="sub" style="margin-top:6px">0 / 100 clarity</div></div><div style="min-width:240px"><label style="margin-top:0">Domain</label><select id="domain"><option>Legal (Bluebook)</option><option>Healthcare</option><option>Real Estate</option><option>Education</option><option>General Business</option></select></div></div>
+</section>
+
+<section class="card" style="margin-top:12px">
+  <div class="tip"><strong>How to use this (3 steps):</strong> 1) Fill out as much as you know. 2) Click <strong>Generate Brief</strong>. 3) Click <strong>Download</strong> to share with your builder. This output helps us design your app/AI tool around your real workflow, constraints, and priorities.</div>
+</section>
+
+<section class="grid">
+<div class="card"><h3>1) Problem Brief</h3>
+<label>Primary user</label><input id="user" placeholder="e.g., litigation associate"/>
+<label>Current pain</label><textarea id="pain"></textarea>
+<label>Desired outcome</label><textarea id="outcome"></textarea>
+<label>Success metric</label><input id="metric"/>
+</div>
+<div class="card"><h3>2) Workflow + Constraints</h3>
+<label>Current steps</label><textarea id="workflow"></textarea>
+<label>Failure points</label><textarea id="failures"></textarea>
+<label>Constraints</label><textarea id="constraints"></textarea>
+<label>Integrations</label><input id="integrations"/>
+</div>
+<div class="card"><h3>3) Source Matrix</h3>
+<label>Top source types (ranked)</label><textarea id="sourceTypes"></textarea>
+<label>Most error-prone source types</label><textarea id="sourceErrors"></textarea>
+<label>Required fields per source type</label><textarea id="sourceFields"></textarea>
+</div>
+<div class="card"><h3>4) Rule Variance + Style Overrides</h3>
+<label>Rule baseline / edition</label><input id="ruleEdition" placeholder="e.g., Bluebook 21st ed"/>
+<label>Firm/court-specific overrides</label><textarea id="overrides"></textarea>
+<label>Jurisdiction requirements</label><textarea id="jurisdiction"></textarea>
+</div>
+<div class="card"><h3>5) Risk + QA</h3>
+<label>Cost of errors</label><textarea id="risk"></textarea>
+<label>Minimum acceptable first-pass accuracy (%)</label><input id="accuracy" type="number" min="1" max="100" value="95"/>
+<label>Human review policy</label><textarea id="reviewPolicy"></textarea>
+</div>
+<div class="card"><h3>6) Workflow Placement</h3>
+<label>Where this tool should appear in the day</label><textarea id="placement"></textarea>
+<label>Preferred output format</label><input id="outputFormat"/>
+<label>Required turnaround time</label><input id="turnaround" placeholder="e.g., under 2 min/source"/>
+</div>
+<div class="card"><h3>7) V1 Scope</h3>
+<label>Must-have capabilities</label><textarea id="must"></textarea>
+<label>Out of scope</label><textarea id="outscope"></textarea>
+<label>Usage frequency</label><input id="frequency"/>
+<label>Biggest adoption blocker</label><input id="blocker"/>
+</div>
+<div class="card"><h3>8) Change Management</h3>
+<label>Who approves adoption?</label><input id="approver"/>
+<label>Who might resist and why?</label><textarea id="resistance"></textarea>
+<label>What builds trust in week 1?</label><textarea id="trust"></textarea>
+<label>Demo scenario</label><textarea id="demo"></textarea>
+</div>
+</section>
+
+<section class="card" style="margin-top:12px"><div class="row"><button id="generate">Generate Brief</button><button id="copy">Copy Brief</button><button id="dlTxt">Download .txt</button><button id="dlMd">Download .md</button></div>
+<h3>Generated Client Brief</h3><div id="brief" class="out">Fill the intake and click Generate Brief.</div></section>
+
+</div>
+<script>
+const fields=["user","pain","outcome","metric","workflow","failures","constraints","integrations","sourceTypes","sourceErrors","sourceFields","ruleEdition","overrides","jurisdiction","risk","accuracy","reviewPolicy","placement","outputFormat","turnaround","must","outscope","frequency","blocker","approver","resistance","trust","demo"];
+const $=id=>document.getElementById(id), val=id=>($(id)?.value||'').trim()||"(not provided)";
+function rescore(){let f=0;fields.forEach(id=>{if(($(id)?.value||'').trim())f++;});const pct=Math.round((f/fields.length)*100);$('fill').style.width=pct+'%';$('score').textContent=`${pct} / 100 clarity`;}
+fields.forEach(id=>$(id).addEventListener('input',rescore));rescore();
+function stamp(){const d=new Date(),p=n=>String(n).padStart(2,'0');return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}_${p(d.getHours())}-${p(d.getMinutes())}`}
+function pack(){return {domain:val('domain'),problem:{user:val('user'),pain:val('pain'),outcome:val('outcome'),metric:val('metric')},workflow:{steps:val('workflow'),failures:val('failures'),constraints:val('constraints'),integrations:val('integrations')},sourceMatrix:{types:val('sourceTypes'),errors:val('sourceErrors'),requiredFields:val('sourceFields')},ruleVariance:{edition:val('ruleEdition'),overrides:val('overrides'),jurisdiction:val('jurisdiction')},riskQA:{risk:val('risk'),accuracyTarget:val('accuracy'),reviewPolicy:val('reviewPolicy')},placement:{timing:val('placement'),outputFormat:val('outputFormat'),turnaround:val('turnaround')},scope:{must:val('must'),outOfScope:val('outscope'),frequency:val('frequency'),blocker:val('blocker')},changeMgmt:{approver:val('approver'),resistance:val('resistance'),trust:val('trust'),demo:val('demo')}}}
+function buildBrief(){const d=pack(); const text=`PROJECT INTAKE SUMMARY\nDomain: ${d.domain}\n\n1) PROBLEM BRIEF\n- User: ${d.problem.user}\n- Pain: ${d.problem.pain}\n- Outcome: ${d.problem.outcome}\n- Metric: ${d.problem.metric}\n\n2) WORKFLOW + CONSTRAINTS\n- Steps: ${d.workflow.steps}\n- Failures: ${d.workflow.failures}\n- Constraints: ${d.workflow.constraints}\n- Integrations: ${d.workflow.integrations}\n\n3) SOURCE MATRIX\n- Types: ${d.sourceMatrix.types}\n- Error-prone: ${d.sourceMatrix.errors}\n- Required fields: ${d.sourceMatrix.requiredFields}\n\n4) RULE VARIANCE / OVERRIDES\n- Edition: ${d.ruleVariance.edition}\n- Overrides: ${d.ruleVariance.overrides}\n- Jurisdiction: ${d.ruleVariance.jurisdiction}\n\n5) RISK + QA\n- Error cost: ${d.riskQA.risk}\n- Accuracy target: ${d.riskQA.accuracyTarget}%\n- Review policy: ${d.riskQA.reviewPolicy}\n\n6) WORKFLOW PLACEMENT\n- Timing: ${d.placement.timing}\n- Output format: ${d.placement.outputFormat}\n- Turnaround: ${d.placement.turnaround}\n\n7) V1 SCOPE\n- Must have: ${d.scope.must}\n- Out of scope: ${d.scope.outOfScope}\n- Frequency: ${d.scope.frequency}\n- Blocker: ${d.scope.blocker}\n\n8) CHANGE MANAGEMENT\n- Approver: ${d.changeMgmt.approver}\n- Resistance: ${d.changeMgmt.resistance}\n- Trust week 1: ${d.changeMgmt.trust}\n- Demo: ${d.changeMgmt.demo}\n\nWHAT THIS OUTPUT IS FOR\n- This brief is the blueprint used to build your app/AI tool around your real needs.`; $('brief').textContent=text; return text;}
+$('generate').addEventListener('click',buildBrief);
+$('copy').addEventListener('click',async()=>{const text=buildBrief(); try{await navigator.clipboard.writeText(text);}catch{}});
+function dl(name,text,mime){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
+$('dlTxt').addEventListener('click',()=>{const text=buildBrief(); dl(`client-clarity-v2_${stamp()}.txt`,text,'text/plain;charset=utf-8');});
+$('dlMd').addEventListener('click',()=>{const text=buildBrief(); dl(`client-clarity-v2_${stamp()}.md`,`# Client Clarity Engine v2 Output\n\n\`\`\`\n${text}\n\`\`\`\n`,'text/markdown;charset=utf-8');});
+
+// Easter eggs: roses + surprise cats 🐈
+const roseLayer = document.getElementById('rose-layer');
+const catLayer = document.getElementById('cat-layer');
+function spawnRose(){
+  const r=document.createElement('div');
+  r.className='rose';
+  r.textContent = Math.random() > 0.5 ? '🌹' : '🥀';
+  r.style.left = Math.random()*100 + 'vw';
+  r.style.animationDuration = (6 + Math.random()*6) + 's';
+  r.style.fontSize = (14 + Math.random()*16) + 'px';
+  roseLayer.appendChild(r);
+  setTimeout(()=>r.remove(),13000);
+}
+let roseTimer = setInterval(spawnRose, 2200);
+
+document.addEventListener('keydown',(e)=>{
+  if(e.key.toLowerCase()==='r'){
+    for(let i=0;i<12;i++) setTimeout(spawnRose,i*120);
+  }
+});
+
+function spawnCat(){
+  const c=document.createElement('div');
+  const cats=['🐈','🐈‍⬛','😺'];
+  c.className='cat-pop';
+  c.textContent=cats[Math.floor(Math.random()*cats.length)];
+  c.style.bottom = (8 + Math.random()*22) + 'px';
+  catLayer.appendChild(c);
+  setTimeout(()=>c.remove(),8500);
+}
+setTimeout(spawnCat, 4000);
+setInterval(()=>{ if(Math.random() > 0.45) spawnCat(); }, 28000);
+
+</script></body></html>
