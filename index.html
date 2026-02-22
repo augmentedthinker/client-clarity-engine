@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
 <title>Client Clarity Engine v2</title>
 <style>
 :root{--bg:#0b1020;--line:#2f447f;--t:#eaf0ff;--m:#aebbe2;--a:#7fe7ff;--b:#c39dff;--gold:#e7c27d}
@@ -39,14 +39,27 @@ button:active{transform:translateY(0)}
 @keyframes catWalk{0%{left:-120px;transform:translateY(0)}20%{transform:translateY(-8px)}50%{transform:translateY(0)}100%{left:calc(100vw + 40px);transform:translateY(-6px)}}
 .rose-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid #7a3a56;background:rgba(255,115,156,.12);border-radius:999px;color:#ffb5cf;font-size:.75rem;font-weight:700;margin-left:6px}
 
+.action-bar{position:sticky;bottom:10px;z-index:40;background:linear-gradient(180deg,rgba(20,28,54,.75),rgba(20,28,54,.92));border:1px solid #3c548f;border-radius:12px;padding:8px;backdrop-filter: blur(8px);margin-top:10px}
+
 @media(max-width:950px){.grid{grid-template-columns:1fr}}
+@media(max-width:768px){
+  .wrap{padding:12px}
+  .hero,.card{padding:10px}
+  h2{font-size:1.2rem}
+  h3{font-size:1rem}
+  .row{gap:6px}
+  button{flex:1 1 46%;min-height:44px;font-size:.95rem}
+  input,select,textarea{font-size:16px} /* prevent iOS zoom */
+  .action-bar{position:fixed;left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);margin-top:0}
+  body{padding-bottom:84px}
+}
 </style></head><body><div id="rose-layer"></div><div id="cat-layer"></div><div class="wrap">
 <section class="hero"><div class="badge">PROFESSIONAL INTAKE MODE</div><h2 style="margin:0">🧭 Client Clarity Engine v2 <span class="rose-badge">🌹 Rose Edition</span></h2><div class="sub">Turn fuzzy ideas into a clear build brief your developer can actually use.</div>
 <div class="row" style="margin-top:8px"><div style="flex:1;min-width:220px"><div class="meter"><div id="fill" class="fill"></div></div><div id="score" class="sub" style="margin-top:6px">0 / 100 clarity</div></div><div style="min-width:240px"><label style="margin-top:0">Domain</label><select id="domain"><option>Legal (Bluebook)</option><option>Healthcare</option><option>Real Estate</option><option>Education</option><option>General Business</option></select></div></div>
 </section>
 
 <section class="card" style="margin-top:12px">
-  <div class="tip"><strong>How to use this (3 steps):</strong> 1) Fill out as much as you know. 2) Click <strong>Generate Brief</strong>. 3) Click <strong>Download</strong> to share with your builder. This output helps us design your app/AI tool around your real workflow, constraints, and priorities.</div>
+  <div class="tip"><strong>How to use this (3 steps):</strong> 1) Fill out as much as you know. 2) Click <strong>Generate Brief</strong>. 3) Click <strong>Download</strong> or <strong>Email to Christopher</strong>. This output helps us design your app/AI tool around your real workflow, constraints, and priorities.</div>
 </section>
 
 <section class="grid">
@@ -103,7 +116,10 @@ button:active{transform:translateY(0)}
 </div>
 </section>
 
-<section class="card" style="margin-top:12px"><div class="row"><button id="generate">Generate Brief</button><button id="copy">Copy Brief</button><button id="dlTxt">Download .txt</button><button id="dlMd">Download .md</button></div>
+<section class="card" style="margin-top:12px">
+  <div class="action-bar">
+    <div class="row"><button id="generate">Generate Brief</button><button id="copy">Copy Brief</button><button id="dlTxt">Download .txt</button><button id="dlMd">Download .md</button><button id="emailBrief">Email to Christopher</button></div>
+  </div>
 <h3>Generated Client Brief</h3><div id="brief" class="out">Fill the intake and click Generate Brief.</div></section>
 
 </div>
@@ -120,6 +136,12 @@ $('copy').addEventListener('click',async()=>{const text=buildBrief(); try{await 
 function dl(name,text,mime){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type:mime}));a.download=name;document.body.appendChild(a);a.click();a.remove();}
 $('dlTxt').addEventListener('click',()=>{const text=buildBrief(); dl(`client-clarity-v2_${stamp()}.txt`,text,'text/plain;charset=utf-8');});
 $('dlMd').addEventListener('click',()=>{const text=buildBrief(); dl(`client-clarity-v2_${stamp()}.md`,`# Client Clarity Engine v2 Output\n\n\`\`\`\n${text}\n\`\`\`\n`,'text/markdown;charset=utf-8');});
+$('emailBrief').addEventListener('click',()=>{
+  const text = buildBrief();
+  const subject = encodeURIComponent('Client Clarity Intake Output');
+  const body = encodeURIComponent(`Hi Christopher,\n\nHere is my completed Client Clarity intake output:\n\n${text}\n\nSent from Client Clarity Engine v2`);
+  window.location.href = `mailto:augmentedthinker@gmail.com?subject=${subject}&body=${body}`;
+});
 
 // Easter eggs: roses + surprise cats 🐈
 const roseLayer = document.getElementById('rose-layer');
